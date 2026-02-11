@@ -212,7 +212,8 @@ class MinesweeperAI():
         if (len(neighbors) > 0):
             self.knowledge.add(Sentence(neighbors, count))
 
-        # TODO: 4) mark any additional cells as safe or as mines if it can be concluded based on the AI's knowledge base
+        #  4) mark any additional cells as safe or as mines if it can be concluded based on the AI's knowledge base
+        # 5) add any new sentences to the AI's knowledge base,if they can be inferred from existing knowledge
         while True:            
             changed = False
             new_sentences = set()
@@ -225,19 +226,23 @@ class MinesweeperAI():
                             new_cells = sentence.cells - sentence2.cells  # take the difference
                             new_count = sentence.count - sentence2.count
                             new_sentence = Sentence(new_cells, new_count)
-                            if new_sentence not in self.knowledge or new_sentence not in new_sentences:
+                            if new_sentence not in self.knowledge and new_sentence not in new_sentences:
                                 changed = True
                                 new_sentences.add(new_sentence)
-
+                                        
             self.knowledge |= new_sentences                                   
+            # check is there new known mines
+            for sentence in new_sentences: 
+                if (sentence.known_mines()):
+                    for cell in sentence.known_mines():
+                        self.mark_mine(cell)
+                if (sentence.known_safes()):
+                    for cell in sentence.known_safes():
+                        self.mark_safe(cell)
 
             if not changed:
                 break
-
-         
         
-
-        raise NotImplementedError
 
     def make_safe_move(self):
         """
