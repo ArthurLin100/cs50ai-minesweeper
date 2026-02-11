@@ -209,11 +209,33 @@ class MinesweeperAI():
                     elif ((ni, nj) not in self.safes):  # exclude the safes
                         neighbors.add((ni, nj))
         
-        if(len(neighbors) > 0):
+        if (len(neighbors) > 0):
             self.knowledge.add(Sentence(neighbors, count))
 
         # TODO: 4) mark any additional cells as safe or as mines if it can be concluded based on the AI's knowledge base
+        while True:            
+            changed = False
+            new_sentences = set()
+            for sentence in self.knowledge:
+                for sentence2 in self.knowledge:
+                    if not sentence2.cells:
+                        continue
+                    if (sentence != sentence2):
+                        if sentence.cells > sentence2.cells:  # check subset
+                            new_cells = sentence.cells - sentence2.cells  # take the difference
+                            new_count = sentence.count - sentence2.count
+                            new_sentence = Sentence(new_cells, new_count)
+                            if new_sentence not in self.knowledge or new_sentence not in new_sentences:
+                                changed = True
+                                new_sentences.add(new_sentence)
 
+            self.knowledge |= new_sentences                                   
+
+            if not changed:
+                break
+
+         
+        
 
         raise NotImplementedError
 
