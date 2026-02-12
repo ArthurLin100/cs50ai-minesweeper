@@ -257,7 +257,6 @@ class MinesweeperAI():
             if not changed:
                 break
         
-
     def make_safe_move(self):
         """
         Returns a safe cell to choose on the Minesweeper board.
@@ -273,7 +272,6 @@ class MinesweeperAI():
             safe_move = (self.safes - self.moves_made).pop()
             return safe_move
         
-
     def make_random_move(self):
         """
         Returns a move to make on the Minesweeper board.
